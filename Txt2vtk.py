@@ -39,26 +39,9 @@ class Txt2vtk:
                 positions.InsertNextPoint(
                     self.coordinates_to_cartesian(raw_altitudes[i][j] + self.EARTH_RADIUS, math.radians(self.lat_min + i * interval_lat), math.radians(self.long_min + j * interval_long)))
 
-        # # TODO Set lake altitudes to 0
-        # # Détection des lacs
-        # visited = np.zeros(raw_altitudes.shape, dtype=bool)
-        # for i in range(altitudes.shape[0]):
-        #     for j in range(altitudes.shape[1]):
-        #         if not visited[i, j] and altitudes[i, j] < 30:
-        #             # Début d'une nouvelle zone
-        #             queue = [(i, j)]
-        #             visited[i, j] = True
-        #             while queue:
-        #                 x, y = queue.pop(0)
-        #                 # Parcours des voisins
-        #                 for dx, dy in [(1, 0), (-1, 0), (0, 1), (0, -1)]:
-        #                     nx, ny = x + dx, y + dy
-        #                     if nx >= 0 and ny >= 0 and nx < altitudes.shape[0] and ny < altitudes.shape[1]:
-        #                         if not visited[nx, ny]:
-        #                             if altitudes[nx, ny] < 30:
-        #                                 # Ajout à la zone
-        #                                 queue.append((nx, ny))
-        #                                 visited[nx, ny] = True
+        raw_altitudes = np.array(raw_altitudes)
+        lakes = detect_flat_areas(raw_altitudes)
+        raw_altitudes[lakes] = 0
 
         altitudes = vtk.vtkIntArray()
 
@@ -86,6 +69,11 @@ class Txt2vtk:
         writer.SetInputData(self.vtk_grid)
         writer.SetFileName(filename)
         writer.Write()
+
+def detect_flat_areas(altitudes, size = 512):
+    labels = measure.label(altitudes, connectivity=1)
+    lakes = morphology.remove_small_objects(labels, size) > 0
+    return lakes
 
 if __name__ == '__main__':
     LAT_MIN = 45
