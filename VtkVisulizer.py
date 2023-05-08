@@ -20,17 +20,17 @@ if __name__ == '__main__':
     LONG_MIN = 5
     LONG_MAX = 7.5
 
-    RAW_DATA_FILE = "data/altitudes.txt"
-    VTK_GRID_FILE = "data/grid.vtk"
-
     EARTH_RADIUS = 6371009  # meters
     CAMERA_DISTANCE = 500000
-    SEA_LEVEL = 0
+    SEA_LEVEL = 500
+
+    RAW_DATA_FILE = "data/altitudes.txt"
+    VTK_GRID_FILE = "data/grid_" + str(SEA_LEVEL) + ".vtk"
 
     grid = None
 
     if not os.path.exists(VTK_GRID_FILE):
-        txt2vtk = Txt2vtk(RAW_DATA_FILE, LAT_MIN, LAT_MAX, LONG_MIN, LONG_MAX)
+        txt2vtk = Txt2vtk(RAW_DATA_FILE, LAT_MIN, LAT_MAX, LONG_MIN, LONG_MAX, sea_level=SEA_LEVEL)
         txt2vtk.read()
         txt2vtk.write(VTK_GRID_FILE)
         grid = txt2vtk.vtk_grid
@@ -89,7 +89,7 @@ if __name__ == '__main__':
     w2if = vtk.vtkWindowToImageFilter()
     w2if.SetInput(renWin)
     w2if.Update()
-    filename = "Map_Screenshot_Sea_Level_" + str(SEA_LEVEL) + ".png"
+    filename = "Switzerland_" + str(SEA_LEVEL) + ".png"
     writer = vtk.vtkPNGWriter()
     writer.SetFileName(filename)
     writer.SetInputData(w2if.GetOutput())
