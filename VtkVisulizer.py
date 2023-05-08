@@ -35,12 +35,13 @@ if __name__ == '__main__':
         reader.Update()
         grid = reader.GetOutput()
 
-    color_mapping = vtk.vtkColorTransferFunction()
-    color_mapping.AddRGBPoint(0, 0.513, 0.49, 1)
-    color_mapping.AddRGBPoint(1, 0.157, 0.325, 0.141)
-    color_mapping.AddRGBPoint(500, 0.219, 0.717, 0.164)
-    color_mapping.AddRGBPoint(900, 0.886, 0.721, 0.364)
-    color_mapping.AddRGBPoint(1600, 1, 1, 1)
+    ctf = vtk.vtkColorTransferFunction()
+    ctf.AddRGBPoint(0, 0, 0.392, 1)
+    ctf.AddRGBPoint(1, 0.1, 0.4, 0.01)
+    ctf.AddRGBPoint(200, 0.1, 0.5, 0.01)
+    ctf.AddRGBPoint(400, 0.01, 0.7, 0.01)
+    ctf.AddRGBPoint(800, 0.8, 0.6, 0.1)
+    ctf.AddRGBPoint(1600, 1, 1, 1)
 
     mapper = vtk.vtkDataSetMapper()
     mapper.SetInputData(grid)
@@ -59,7 +60,7 @@ if __name__ == '__main__':
     position_x, position_y, position_z = coordinates_to_cartesian(EARTH_RADIUS + CAMERA_DISTANCE, math.radians((LAT_MIN + LAT_MAX) / 2),
                                                                   math.radians((LONG_MIN + LONG_MAX) / 2))
     renderer.GetActiveCamera().SetPosition([position_x, position_y, position_z])
-    renderer.GetActiveCamera().SetClippingRange(0.1, 1000000)
+    renderer.GetActiveCamera().SetClippingRange(0.1, 10000)
 
     window = vtk.vtkRenderWindow()
     window.AddRenderer(renderer)
