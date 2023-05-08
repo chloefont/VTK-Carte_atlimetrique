@@ -10,7 +10,6 @@ class Txt2vtk:
     EARTH_RADIUS = 6371009  # meters
     vtk_grid = vtk.vtkStructuredGrid()
 
-    # The first line of the file is the size of the grid
     def __init__(self, filename, lat_min, lat_max, long_min, long_max, sea_level=0):
         self.filename = filename
         self.lat_min = lat_min
@@ -22,12 +21,12 @@ class Txt2vtk:
     def read(self):
         file = open(self.filename, 'r')
 
-        # Read first line
+        # Read header
         grid_dimensions = file.readline().strip().split(" ")
         self.line_size = int(grid_dimensions[0])
         self.column_size = int(grid_dimensions[1])
 
-        # Read rest of the file
+        #Read data
         raw_altitudes = [[int(x) for x in line.strip().split(" ")] for line in file]
 
         positions = vtk.vtkPoints()
