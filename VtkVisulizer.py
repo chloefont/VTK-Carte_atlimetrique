@@ -69,7 +69,7 @@ if __name__ == '__main__':
 
     window = vtk.vtkRenderWindow()
     window.AddRenderer(renderer)
-    window.SetSize(800, 800)
+    window.SetSize(1000, 1000)
 
     interactor = vtk.vtkRenderWindowInteractor()
     interactor.SetRenderWindow(window)
@@ -78,14 +78,14 @@ if __name__ == '__main__':
     interactor.SetInteractorStyle(style)
 
     window.Render()
-    w2if = vtk.vtkWindowToImageFilter()
-    w2if.SetInput(window)
-    w2if.Update()
+    imageFilter = vtk.vtkWindowToImageFilter()
+    imageFilter.SetInput(window)
+    imageFilter.Update()
     filename = "Switzerland_" + str(SEA_LEVEL) + ".png"
-    writer = vtk.vtkPNGWriter()
-    writer.SetFileName(filename)
-    writer.SetInputData(w2if.GetOutput())
-    writer.Write()
+    pngWriter = vtk.vtkPNGWriter()
+    pngWriter.SetFileName(filename)
+    pngWriter.SetInputData(imageFilter.GetOutput())
+    pngWriter.Write()
 
     interactor.Initialize()
     interactor.Start()
