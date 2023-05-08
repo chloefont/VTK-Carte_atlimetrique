@@ -22,7 +22,7 @@ if __name__ == '__main__':
 
     EARTH_RADIUS = 6371009  # meters
     CAMERA_DISTANCE = 500000
-    SEA_LEVEL = 500
+    SEA_LEVEL = 0
 
     RAW_DATA_FILE = "data/altitudes.txt"
     VTK_GRID_FILE = "data/grid_" + str(SEA_LEVEL) + ".vtk"
@@ -42,10 +42,11 @@ if __name__ == '__main__':
         grid = reader.GetOutput()
 
     ctf = vtk.vtkColorTransferFunction()
-    ctf.AddRGBPoint(0, 0.513, 0.49, 1)
-    ctf.AddRGBPoint(1, 0.157, 0.325, 0.141)
-    ctf.AddRGBPoint(500, 0.219, 0.717, 0.164)
-    ctf.AddRGBPoint(900, 0.886, 0.721, 0.364)
+    ctf.AddRGBPoint(0, 0, 0.392, 1)
+    ctf.AddRGBPoint(1, 0.1, 0.4, 0.01)
+    ctf.AddRGBPoint(200, 0.1, 0.5, 0.01)
+    ctf.AddRGBPoint(400, 0.01, 0.7, 0.01)
+    ctf.AddRGBPoint(800, 0.8, 0.6, 0.1)
     ctf.AddRGBPoint(1600, 1, 1, 1)
 
     mapper = vtk.vtkDataSetMapper()
