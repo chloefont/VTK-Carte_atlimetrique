@@ -3,7 +3,7 @@ import math
 from skimage import measure, morphology
 import numpy as np
 
-
+# pour éviter de refaire le calcul à chaque fois, nous avons décidé de sauvegarder les résultats dans un fichier
 class Txt2vtk:
     line_size = 0
     column_size = 0
@@ -69,6 +69,7 @@ class Txt2vtk:
         writer.SetFileName(filename)
         writer.Write()
 
+# Copilot nous a simplifié la vie pour ce point
 def detect_flat_areas(altitudes, size = 512):
     labels = measure.label(altitudes, connectivity=1)
     lakes = morphology.remove_small_objects(labels, size) > 0
