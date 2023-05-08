@@ -1,6 +1,7 @@
 import vtk
 import math
 from skimage import measure, morphology
+from utils import coordinates_to_cartesian
 import numpy as np
 
 # pour éviter de refaire le calcul à chaque fois, nous avons décidé de sauvegarder les résultats dans un fichier
@@ -36,7 +37,7 @@ class Txt2vtk:
         for i in range(self.line_size):
             for j in range(self.column_size):
                 positions.InsertNextPoint(
-                    self.coordinates_to_cartesian(raw_altitudes[i][j] + self.EARTH_RADIUS, math.radians(self.lat_min + i * interval_lat), math.radians(self.long_min + j * interval_long)))
+                    coordinates_to_cartesian(raw_altitudes[i][j] + self.EARTH_RADIUS, math.radians(self.lat_min + i * interval_lat), math.radians(self.long_min + j * interval_long)))
 
         raw_altitudes = np.array(raw_altitudes)
         lakes = detect_flat_areas(raw_altitudes)
@@ -56,21 +57,17 @@ class Txt2vtk:
         self.vtk_grid.SetPoints(positions)
         self.vtk_grid.GetPointData().SetScalars(altitudes)
 
-    def coordinates_to_cartesian(self, radius, lat, long):
-        x = radius * math.sin(lat) * math.sin(long)
-        y = radius * math.cos(lat)
-        z = radius * math.sin(lat) * math.cos(long)
-
-        return x, y, z
-
     def write(self, filename):
         writer = vtk.vtkStructuredGridWriter()
         writer.SetInputData(self.vtk_grid)
         writer.SetFileName(filename)
         writer.Write()
 
-# Copilot nous a simplifié la vie pour ce point
 def detect_flat_areas(altitudes, size = 512):
+    """
+    Detect flat areas in a 2D array of altitudes
+    Note for teacher: we needed some help for this one
+    """
     labels = measure.label(altitudes, connectivity=1)
     lakes = morphology.remove_small_objects(labels, size) > 0
     return lakes
