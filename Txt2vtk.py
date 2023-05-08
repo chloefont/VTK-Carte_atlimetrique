@@ -20,6 +20,9 @@ class Txt2vtk:
         self.sea_level = sea_level
 
     def read(self):
+        """
+        Read the data from the file and store it in a vtkStructuredGrid
+        """
         file = open(self.filename, 'r')
 
         # Read header
@@ -31,7 +34,7 @@ class Txt2vtk:
         raw_altitudes = [[int(x) for x in line.strip().split(" ")] for line in file]
 
         positions = vtk.vtkPoints()
-        interval_lat = (self.lat_max - self.lat_min) / (self.line_size - 1)  # TODO retirer le -1?
+        interval_lat = (self.lat_max - self.lat_min) / (self.line_size - 1)
         interval_long = (self.long_max - self.long_min) / (self.column_size - 1)
 
         for i in range(self.line_size):
@@ -52,12 +55,21 @@ class Txt2vtk:
                 else:
                     altitudes.InsertNextValue(raw_altitudes[i][j])
 
+        # There is a lot of data structure, as VtkImageData, VtkUnstructuredGrid, VtkStructuredGrid, VtkPolyData, RectilinearGrid etc.
+        # VtkImageData is used ti store voxels, which is not our case
+        # VtkUnstructuredGrid is used to store data in irregularly spaced points, which is not our case neither
+        # VtkPolyData is mainly used to store polygons, which is not our case neither
+        # RectilinearGrid is similar as VtkImageData, but with irregularly spaced points.
+        # We chose to use VtkStructuredGrid because it seems to be the most appropriate for storing regularly spaced points.
         self.vtk_grid = vtk.vtkStructuredGrid()
         self.vtk_grid.SetDimensions(self.line_size, self.column_size, 1)
         self.vtk_grid.SetPoints(positions)
         self.vtk_grid.GetPointData().SetScalars(altitudes)
 
     def write(self, filename):
+        """
+        Write the vtk grid to a file to avoid having to recompute it every time
+        """
         writer = vtk.vtkStructuredGridWriter()
         writer.SetInputData(self.vtk_grid)
         writer.SetFileName(filename)
@@ -73,6 +85,10 @@ def detect_flat_areas(altitudes, size = 512):
     return lakes
 
 if __name__ == '__main__':
+    """
+    This script is used to convert a text file containing altitudes to a vtk file. The first line of the text file
+    contains the dimensions of the grid. The following lines contain the altitudes of each point of the grid.
+    """
     LAT_MIN = 45
     LAT_MAX = 47.5
     LONG_MIN = 5
