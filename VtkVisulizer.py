@@ -66,7 +66,7 @@ if __name__ == '__main__':
     cx, cy, cz = to_cartesian(EARTH_RADIUS + CAMERA_DISTANCE, math.radians((LAT_MIN + LAT_MAX) / 2),
                               math.radians((LONG_MIN + LONG_MAX) / 2))
     renderer.GetActiveCamera().SetPosition([cx, cy, cz])
-    renderer.GetActiveCamera().SetClippingRange(0.1, 1_000_000)
+    renderer.GetActiveCamera().SetClippingRange(0.1, 10000)
 
     window = vtk.vtkRenderWindow()
     window.AddRenderer(renderer)
